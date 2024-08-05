@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"strings"
 
 	jira "github.com/andygrunwald/go-jira/v2/cloud"
 
@@ -18,6 +19,7 @@ import (
 // Ensure provider defined types fully satisfy framework interfaces.
 var (
 	_ resource.Resource                = &ComponentResource{}
+	_ resource.ResourceWithConfigure   = &ComponentResource{}
 	_ resource.ResourceWithImportState = &ComponentResource{}
 )
 
@@ -206,9 +208,11 @@ func (r *ComponentResource) Update(ctx context.Context, req resource.UpdateReque
 	}
 
 	state = JiraComponentResourceModel{
-		Name:        types.StringValue(updatedComponent.Name),
-		Description: types.StringValue(updatedComponent.Description),
-		Lead:        types.StringValue(updatedComponent.Lead.AccountID),
+		Project:      types.StringValue(updatedComponent.Project),
+		Name:         types.StringValue(updatedComponent.Name),
+		Description:  types.StringValue(updatedComponent.Description),
+		AssigneeType: types.StringValue(updatedComponent.AssigneeType),
+		Lead:         types.StringValue(updatedComponent.Lead.AccountID),
 	}
 
 	tflog.Trace(ctx, fmt.Sprintf("created a brand new component (ID: %s)", updatedComponent.ID))
@@ -263,9 +267,11 @@ func (r *ComponentResource) Read(ctx context.Context, req resource.ReadRequest, 
 	}
 
 	state = JiraComponentResourceModel{
-		Name:        types.StringValue(projectComponentEnriched.Name),
-		Description: types.StringValue(projectComponentEnriched.Description),
-		Lead:        types.StringValue(projectComponentEnriched.Lead.AccountID),
+		Project:      types.StringValue(projectComponentEnriched.Project),
+		Name:         types.StringValue(projectComponentEnriched.Name),
+		Description:  types.StringValue(projectComponentEnriched.Description),
+		AssigneeType: types.StringValue(projectComponentEnriched.AssigneeType),
+		Lead:         types.StringValue(projectComponentEnriched.Lead.AccountID),
 	}
 
 	// Save data into Terraform state
@@ -281,5 +287,41 @@ func (r *ComponentResource) Delete(ctx context.Context, req resource.DeleteReque
 }
 
 func (r *ComponentResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
+	// By default, a Jira Cloud Project key has to be in the format of [A-Z][A-Z]+
+	// This means we can safely assume that the first part of the import ID is the project key and the second part is the component name.
+	// The two parts are separated by a colon.
+	// Having both parts allows us to have unique components across different projects since the pair of project key and component name is unique per Jira Cloud instance.
+
+	importIDParts := strings.Split(req.ID, ":")
+	if len(importIDParts) != 2 {
+		resp.Diagnostics.AddError(
+			"Resource ImportState Invalid ID",
+			"Resource import ID must be in the format of `project_key:component_name`.",
+		)
+		return
+	}
+
+	namePath := path.Root("name")
+	if namePath.Equal(path.Empty()) {
+		resp.Diagnostics.AddError(
+			"Resource Import Passthrough Missing Attribute Name",
+			"This is always an error in the provider. Please report the following to the provider developer:\n\n"+
+				"Resource ImportState method call to ImportStatePassthroughID path must be set to a valid attribute path that can accept a string value.",
+		)
+	}
+
+	projectPath := path.Root("project")
+	if projectPath.Equal(path.Empty()) {
+		resp.Diagnostics.AddError(
+			"Resource Import Passthrough Missing Attribute Project",
+			"This is always an error in the provider. Please report the following to the provider developer:\n\n"+
+				"Resource ImportState method call to ImportStatePassthroughID path must be set to a valid attribute path that can accept a string value.",
+		)
+	}
+
+	projectKey := importIDParts[0]
+	componentName := importIDParts[1]
+
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, namePath, componentName)...)
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, projectPath, projectKey)...)
 }
