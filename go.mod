@@ -3,7 +3,7 @@ module terraform-provider-jiracloud
 go 1.21
 
 require (
-	github.com/andygrunwald/go-jira/v2 v2.0.0-20260101104437-351048edf719
+	github.com/andygrunwald/go-jira/v2 v2.0.0-20260113181222-a17356f7cb78
 	github.com/hashicorp/terraform-plugin-docs v0.19.4
 	github.com/hashicorp/terraform-plugin-framework v1.10.0
 	github.com/hashicorp/terraform-plugin-go v0.23.0
