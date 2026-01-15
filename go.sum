@@ -20,6 +20,8 @@ github.com/andygrunwald/go-jira/v2 v2.0.0-20240719054840-2aa3adf50836 h1:hhLXTGp
 github.com/andygrunwald/go-jira/v2 v2.0.0-20240719054840-2aa3adf50836/go.mod h1:czEYL8eM/GFpH21PraG2mZtCcw3ucFNijoWSQL+q4LM=
 github.com/andygrunwald/go-jira/v2 v2.0.0-20260101104437-351048edf719 h1:9H7i2Z/wyNQxLhGonECek6yZzYPgpgbMkLakgotJCvU=
 github.com/andygrunwald/go-jira/v2 v2.0.0-20260101104437-351048edf719/go.mod h1:iJN0Xoo8/6ZRrANYLVXg77qdhn3a/TUIdLLgTxLaoII=
+github.com/andygrunwald/go-jira/v2 v2.0.0-20260113181222-a17356f7cb78 h1:ZX6jJNbpPeKNc5thBeI08AMBd0Ox/eudP0laZGsohtQ=
+github.com/andygrunwald/go-jira/v2 v2.0.0-20260113181222-a17356f7cb78/go.mod h1:iJN0Xoo8/6ZRrANYLVXg77qdhn3a/TUIdLLgTxLaoII=
 github.com/apparentlymart/go-textseg/v12 v12.0.0/go.mod h1:S/4uRK2UtaQttw1GenVJEynmyUenKwP++x/+DdGV/Ec=
 github.com/apparentlymart/go-textseg/v15 v15.0.0 h1:uYvfpb3DyLSCGWnctWKGj857c6ew1u1fNQOlOtuGxQY=
 github.com/apparentlymart/go-textseg/v15 v15.0.0/go.mod h1:K8XmNZdhEBkdlyDdvbmmsvpAG721bKi0joRfFdHIWJ4=
